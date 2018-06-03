@@ -1,0 +1,180 @@
+﻿Why would you consider a Scripting Language as JavaScript as your Backend Platform?
+
+1. Det er super "lightweight" siden du kan køre både din frontend og backend med javascript.
+2. single event loop = tråden (js kører på én tråd) venter ikke på input og output operationer.
+3. side server applikation som gør at det bliver "real-time" og tingene loader hurtigere.
+
+Explain Pros & Cons in using Node.js + Express to implement your Backend compared to a strategy using for example Java/JAX-RS/Tomcat
+
+pros:
+
+1. loader hurtigere, real-time, single-event, lightweight.
+
+cons: 
+
+1. Node.js virker ikke særlig godt for når der kræves meget fra din cpu, netop fordi vi kører på en tråd,
++ så blokeres den inkommende request.
+
+Node.js uses a Single Threaded Non-blocking strategy to handle asynchronous task.
+ Explain strategies to implement a Node.js based server architecture that still could take advantage of a multi-core Server.
+
+ 1. Du må køre flere node.js serverer. Én per kerne og split trafikken imellem dem. Cluster modulen er populær at bruge til dette.
+
+ Explain briefly how to deploy a Node/Express application including how to solve the following deployment problems:
+Ensure that you Node-process restarts after a (potential) exception that closed the application
+Ensure that you Node-process restarts after a server (Ubuntu) restart
+Ensure that you can take advantage of a multi-core system
+Ensure that you can run “many” node-applications on a single droplet on the same port (80)
+
+1. Hvis dine node-modules er i orden kan du skrive npm start (defineres i package.json, ellers er det node index.js).
+2. Hvis du vil at nogen ændringer automatisk skal genstarte serveren skal du bruge modullen nodemon og skrive nodemon index.js
+3. Hvis du vil at det hele tiden skal køre på digitalocean skal du bruge modullen pm2 og skrive pm2 start index.js, og ellers
+hvis systemet er genstartet må du sætte pm2 i forbindelse ved at skrive: pm2 startup systemd.
+4. Hvis du vil gøre brug af flere kerner må du køre flere node.js serverer og splitte trafikken mellem dem
+5. Ved brug af reverse proxy kan flere node-applikationer køre på samme port.
+eksempel:
+server {
+    listen 80;
+
+    server_name example1.com;
+
+    location / {
+        proxy_pass http://yourDropletAddress:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+
+server {
+    listen 80;
+
+    server_name example2.com;
+    location / {
+        proxy_pass http://yourDropletAddress:8081;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }   
+}
+
+Explain, using relevant examples, concepts related to testing a REST-API using Node/JavaScript + relevant packages 
+1. De relevanter pakker er: mocha og chai. Mocha laver async (async = på samme tid) tests, chai gør testen nemmere ved at give dig mange "assertions" (påstande)
+eksempel:
+let mongoose = require("mongoose");
+let Book = require('../app/models/book');
+
+let chai = require('chai');
+let chaiHttp = require('chai-http');
+let server = require('../server'); // <------ den her henter express()
+let should = chai.should();
+
+   describe('/GET book', () => {
+      it('it should GET all the books', (done) => { //forklar hvad der testes.
+            chai.request(server)
+            .get('/book') //få fat i ruten /book
+            .end((err, res) => { //og end med:
+                res.should.have.status(200); //status skal være ok
+                res.body.should.be.a('array'); //body skal være et array
+                res.body.length.should.be.eql(0);
+              done();
+            });
+      });
+
+//du kan gøre noget før, under og efter testen med mocha og chai.
+
+Explain, using relevant examples, the Express concept; middleware.
+
+1. middleware funktioner er funktioner med adgang til request object, og response object.
+
+eksempler:
+
+app.get('/', (req, res)=>{
+	res.send("hello world"); //html siden har nu teksten hello world fra response object.
+})
+
+var body = require('body-parse')
+app.use(body.urlencoded({ extended: true }));
+app.use(body.json());
+
+app.get('/somePost', (req, res)=>{
+	console.log(req.body.valueName) <- the input name value from a html form.
+})
+
+Explain, using relevant examples, how to implement sessions, and the legal implications of doing this.
+
+1. ved brug af modullen 'express-session' og 'cookie-parser' kan du lave cookies som er information der gemmes på din browser i en periode.
+Eksemplet nedenfor lave en session kaldet page views som første gang nogen besøger siden vil være 1, ellers tæller den én op hver gang.
+Hemmeligheden bruges til at hashe den string du har valgt til noget volapyk, sådan er cookie er mere sikkert. Angående legal implications så har loven krav
+på at du skal fortælle den besøgende hvad dine cookies gør, og du må få en accept.
+
+var express = require('express');
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+
+var app = express();
+
+app.use(cookieParser());
+app.use(session({secret: "Shh, its a secret!"}));
+
+app.get('/', function(req, res){
+   if(req.session.page_views){ //hvis nogen session hedder page_views
+      req.session.page_views++;
+      res.send("You visited this page " + req.session.page_views + " times");
+   } else {
+      req.session.page_views = 1;
+      res.send("Welcome to this page for the first time!");
+   }
+});
+app.listen(3000);
+
+
+Explain (conceptually) how you would handle sessions if you run your app in clusters to solve some of problems related to deployment.
+
+1.  man kan bruge strong-cluster-express-store...
+
+var ClusterStore = require('strong-cluster-express-store')(session);
+
+    cluster.on('online', function(worker) {
+          console.log('Worker ' + worker.id + ' is online.');
+        });
+   
+    cluster.on('exit', function(worker, code, signal) {
+          console.log('worker ' + worker.id + ' died with signal',signal);
+        });
+
+
+else
+
+    app.use(express.session(
+            { store: new ClusterStore(), secret: 'super-cool' }
+          ));
+
+
+Compare the express strategy toward (server side) templating with the one you used with Java on second semester.
+
+1. I java i anden semester brugte vi servlets og jsp. Der brugte vi også response og request objekter, og ejs minder lidt om jsp med <%= %> tegnene.
+Dog er der forskel fordi det kræves at man sendes til servlet path istedet for jsp siden. Også må man refreshe siden fordi den ikke er realtime, hvilket den er
+i express.
+
+Demonstrate a simple Server Side Rendering example using a technology of your own choice.
+1.  Ejs og express. 
+var value = 2;
+app.get('/', (req, res)){
+res.render('ejsSiden.ejs', {value : value})
+}
+
+
+og så indeni ejsSiden.ejs:
+<body>
+<p>value=<%= value %></p>
+</body>
+
+//hvis nogen ændringer kommer i den der value variablen, så næste gang man besøger '/' siden vil det blive opdateret.
+
+
+

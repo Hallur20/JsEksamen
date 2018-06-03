@@ -177,4 +177,40 @@ og så indeni ejsSiden.ejs:
 //hvis nogen ændringer kommer i den der value variablen, så næste gang man besøger '/' siden vil det blive opdateret.
 
 
+Explain, using a relevant examples, your strategy for implementing a REST-API with Node/Express
+ and show how you can "test" all the four CRUD operations programmatically using for example the Request package.
+1. examples down below.
 
+app.get('/rest, (req, res))=>{
+	Person.find({err, persons}, ()=>{
+			if(err) throw err;
+			res.send();
+			res.json(persons);
+							
+})
+})
+
+app.post('/rest', (req, res)=>{
+	var user = {name: 'hallur', age 5};
+	var u = new User(user);
+	u.save();
+	res.json({message: 'user created'})
+})
+
+app.put('/rest/:user_id', (req, res)=>{
+	User.findById(req.params.user_id, (err, users)=>{
+	if(err) throw err;
+	users.name = req.body.name;
+	users.save((err)=>{
+	if(err) throw err;
+	res.json({message: "user updates"});
+})
+})
+})
+
+app.delete('/rest/:user_id', (req, res)=>{
+	User.remove({_id: req.params.user_id}, (err, users)=>{
+	if(err) throw err;
+	res.json({message: "delete success"});
+})
+})

@@ -1,0 +1,138 @@
+Explain shortly about GraphQL, it purpose and some of it’s use cases
+
+1. GraphQL er et Query Language til API'er, og også et runtime for de queries med dit data.
+Meningen er at Graphql skal hjælpe med at beskrive din data forståeligt, som så gør det nemmere at finde noget bestemt data.
+
+{customers {
+  _id
+}}
+
+inde på hallur.dk:3000/graphql kan du skrive dette, og så vil alle customers og deres id komme frem fra rootQuery.
+
+Mutations bruges til at adde ting, fordi de køres i 'serier', en efter en hvorimod queries eksekveres paralelt, men bruges også til update og delete.
+
+mutation{
+  addUser(firstName:"asdd",lastName:"asd",userName:"asd",password:"asd",created:"",lastUpdates:"asd"){
+   firstName 
+  }
+}
+
+Explain some of the Server Architectures that can be implemented with a GraphQL backend
+1.  
+* fields
+* GraphQLObjectType
+* RootQuery
+* args
+* type
+
+app.use('/graphql', expressGraphQL({
+    schema:schema,
+    graphiql:true
+})) //for at sætte det ind i express i graphql path...
+
+What is meant by the terms over-, and under-fetching in relation to REST
+
+1. over fetching er når du fetcher for meget data, dvs der er data i det response som du ikke har brug for
+ under fetching er når du fetcher for lidt data, hvilket gør at du er nødt til at fetche om igen et andet sted fordi det du har lige nu er ikke nok.
+
+Explain shortly about GraphQL’s type system and some of the benefits we get from this
+1. 
+const {
+    GraphQLObjectType, //typen af en mutation/query/mongooseSchemaObject
+    GraphQLString, //string
+    GraphQLFloat, //float
+    GraphQLInt, //int
+    GraphQLSchema, //bruges til når skemaet skal eksporteres
+    GraphQLList, //liste af feks tal
+    GraphQLNonNull, //kræver feltet bliver udfyldt 
+} = require('graphql');
+fordelen er at vi kan definere hvad der skal udfyldes, hvad typen skal være osv
+
+Explain shortly about GraphQL Schema Definition Language, and provide an number of examples of schemas you have defined.
+1. vis koden... ellers er graphql schema definition language den mest kortfattede måde at specificere et graphql skema.
+Selv jeg har kun lavet et skema, men med meget indhold.
+
+Provide a number of examples demonstrating data fetching with GraphQL. You should provide examples both running in a Sandbox/playground and examples executed in an Apollo Client
+1. vis koden i ApolloClientDemo...
+
+Provide a number of examples demonstrating creating, updating and deleting with Mutations.
+ You should provide examples both running in a Sandbox/playground and examples executed in an Apollo Client.
+
+1. 3 eksempler:
+const query = `
+  mutation SubmitRepo ($repoFullName: String!) {
+    submitRepository (repoFullName: $repoFullName) {
+      id,
+      score,
+    }
+  }
+`;
+const query2 = `
+  mutation updateRepo ($repoFullName: String!) {
+    submitRepository (repoFullName: $repoFullName) {
+      id,
+      score,
+    }
+  }
+`;
+const query3 = `
+  mutation deleteRepo ($repoFullName: String!) {
+    submitRepository (repoFullName: $repoFullName) {
+      id,
+      score,
+    }
+  }
+`;
+
+const variables = {
+  repoFullName: 'apollographql/apollo-fetch',
+};
+
+const apolloFetch = createApolloFetch({ uri });
+
+apolloFetch({ query, variables }).then(...).catch(...);
+
+Explain the Concept of a Resolver function, and provide a number of simple example of resolvers you have implemented in a GraphQL Server.
+1. resolver funktioner muliggørerer graphql autogenerede crud api custom querires og mutationer. VIS DIN KODE.
+
+In an Apollo based React Component, demonstrate how to perform GraphQL Queries?
+1. hmmm, vis koden.
+
+In an Apollo based React Component, demonstrate how to perform GraphQL Mutations?
+1. 3 eksempler:
+const query = `
+  mutation SubmitRepo ($repoFullName: String!) {
+    submitRepository (repoFullName: $repoFullName) {
+      id,
+      score,
+    }
+  }
+`;
+const query2 = `
+  mutation updateRepo ($repoFullName: String!) {
+    submitRepository (repoFullName: $repoFullName) {
+      id,
+      score,
+    }
+  }
+`;
+const query3 = `
+  mutation deleteRepo ($repoFullName: String!) {
+    submitRepository (repoFullName: $repoFullName) {
+      id,
+      score,
+    }
+  }
+`;
+
+const variables = {
+  repoFullName: 'apollographql/apollo-fetch',
+};
+
+const apolloFetch = createApolloFetch({ uri });
+
+apolloFetch({ query, variables }).then(...).catch(...);
+
+ Demonstrate and highlight importants part of a “complete” GraphQL app using Express and MongoDB on the server side, and Apollo on the client.
+
+1. vis rundt i projektet det vigtigste af graphqlserveren og apolloclienten.

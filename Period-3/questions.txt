@@ -1,0 +1,68 @@
+﻿Explain and demonstrate basic Geo-JSON, involving as a minimum, Points and Polygons
+1. Geo-JSON er noget geografisk data som er baseret på javascript object notation (json)
+ Point indeni Geo-JSON er et bestemt sted, som så har coordinater i et array: [lat, lon],
+ Polygon er et tegnet område på mappen, som så har flere koordinater i et aray: [[lat, lon], [lat, lon] ...]
+ og så er det en god idé at ende på samme koordinat som man startede med for at få tegnet polygonen rigtigt.
+
+ Explain and demonstrate ways to create Geo-JSON test data
+ 1. 
+npm install geojson
+var GeoJSON = require('geojson');
+
+var singleobject = { name: 'Location A', category: 'Store', street: 'Market', lat: 39.984, lng: -75.343 }
+GeoJSON.parse(singleobject, {Point: ['lat', 'lng']});
+
+var polygonObject = 
+    {name: 'Area A', category: 'Stores', street: 'Markets',
+        polygon: [
+            [[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]]
+        ]
+    };
+GeoJSON.parse(polygonObject, {'polygon': 'polygon'});
+
+Explain the typical order of longitude and latitude used by Server Side API’s and Client Side API’s
+1. Det er blevet standard, og rigtigt at sige latitude, longitude. Men mange software packages bruger stadig
+longitude, latitude, derfor er det vigtigt at være ops på hvad der skal bruges, men den typiske og rigtige rækkefølger er lan, lon.
+
+Explain and demonstrate a REST API that implements geo-features, using using a relevant geo-library and plain JavaScript
+1. et rest api med geo-features skal blot smide det parsede object ind på siden?
+ alså feks singleObject fra forrige spørgmsål:
+
+ app.get('/geo', (req, res)=>{
+     res.json(GeoJSON.parse(singleobject, {Point: ['lat', 'lng']}));
+ }) //ps ved ik om jeg har misforstået noget her.
+
+Explain and demonstrate a REST API that implements geo-features, using Mongodb’s geospatial queries and indexes.
+1.  jeg forstår ikke spørgsmålet... mongodb geospatial queries? hvorfor ikke mongoose? hvis der er tale om de normale
+json-arrays så kan man bare gemme objektet i et schema fra mongoose.
+
+Explain and demonstrate a React Native Client that uses geo-components (Location, MapView, etc.)
+1. 
+import MapView from 'react-native-maps';
+
+render(){
+    return(
+        <View>
+            <MapView style={{flex: 2}}
+                    region={{
+                    latitude: 123,
+                    longitude: 32,
+                    latitudeDelta: 0.005,
+                    longitudeDelta: 0.005,
+                    }}
+            >
+            </MapView>
+
+        </View>
+    )
+}
+
+Demonstrate both server and client-side, of the geo-related parts of your implementation of the mini project
+
+In my miniproject i have used react-native-maps and placed markers according to the locations being added when people log in with the app.
+In my server i save the data onto mongodb by using mongoose and i use navigator.geolocation in plain javascript to find the current location in the clinet side.
+
+
+
+
+

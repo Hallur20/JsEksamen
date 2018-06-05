@@ -214,3 +214,73 @@ app.delete('/rest/:user_id', (req, res)=>{
 	res.json({message: "delete success"});
 })
 })
+
+Explain, using relevant examples,
+ about testing JavaScript code, relevant packages (Mocha etc.) and how to test asynchronous code.
+ 1. Mocha = async unit tests, chai = flere assertions til testen. Eksempel nedenfor:
+
+var chai = require('chai');
+var assert = chai.assert;
+var expect = chai.expect;
+var should = chai.should();
+
+function myAsyncFunction(callback) {
+    // 50ms delay before callback
+    setTimeout(function() {
+      callback('hello');
+    }, 50);
+  }
+  
+
+it('should return hello as callback parameter', function(done){
+    myAsyncFunction(function(data) {
+      assert.equal(data, 'hello');
+      data.should.equal('hello');
+      expect(data).to.eql('hello');
+      done();
+    });
+  }); //
+
+Explain, using relevant examples, different ways to mock out databases, HTTP-request etc.
+1. man kan lave en json-server, man kan også bare lave et normalt array:
+
+{ "persons" : [{name: hallur, age: 2}, {name: peter, age 5}]};
+
+    skriv npm install -g json-server.
+    hvis filen hedder db.json: json-server --watch db.json
+
+for mocking http requests u can use postman which has all the CRUD requests.
+
+Basic Web Security
+How can we "prevent" third party code used, in or nodeJS applications, from injecting dangerous code into our code base?
+
+1. Ingen brug af eval (eval eksekverer et argument, det muliggører injections), feks bruger setTimeout eval.
+du kan også bruge 'strict mode' for at forhindre småfejle, og så burde du også lave unit-tests. Ikke brug get for at logge ind,
+for det kommer frem i urlet med kodeord og det hele osv osv.
+
+Explain the basics of the Passport authentication framework, and demonstrate how to use it with Passport-local.
+
+1. Det er et authentication middleware for node.js, som kan bruges i ethvert express project. Feks kan man logge ind med facebook.
+passport-local er når du logger ind med et brugernavn og koderord i din node.js applikation.
+først skriver du: npm install passport-local
+
+dernæst hvis du bruger mongoose og mongodb kan du skrive sådan:
+passport.use(new LocalStrategy(
+  function(username, password, done) {
+    User.findOne({ username: username }, function (err, user) {
+      if (err) { return done(err); }
+      if (!user) { return done(null, false); }
+      if (!user.verifyPassword(password)) { return done(null, false); }
+      return done(null, user);
+    });
+  }
+));
+
+Explain about Node tools like Helmet and nsp (the Node Security Project). What do they do, and how have you used them.
+1. Helmlet hjælper din express applikation ved at sætte http headers, mens nsp gør din node applikation sikker ved at 
+gøre brug af et CLI (command line interface) tool der identifiserer vulnerabilites i dit projekt.
+
+Selv har jeg ikke brugt disse moduler men efter at have undersøgt lidt om dem kunne jeg godt finde på at bruge dem i fremtiden.
+
+
+

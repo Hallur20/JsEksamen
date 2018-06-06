@@ -1,5 +1,9 @@
+var express = require('express');
+
 var GeoJSON = require('geojson');
 
+var app = express();
+app.set('view engine', 'ejs');
 
 var singleobject = { name: 'Location A', category: 'Store', street: 'Market', lat: 39.984, lng: -75.343 }
 
@@ -13,3 +17,12 @@ var polygonObject =
     };
 
 console.log(GeoJSON.parse(polygonObject, { 'Polygon': 'polygon' }));
+
+
+app.get('/', (req, res)=>{
+    res.render('index.ejs', {test: 1, single : GeoJSON.parse(singleobject, { Point: ['lat', 'lng'] }), polygon: GeoJSON.parse(polygonObject, { 'Polygon': 'polygon' })});
+});
+
+app.listen(3000, ()=>{
+    console.log("server is up and running on port 3000");
+});

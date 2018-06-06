@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+    <meta charset='utf-8' />
+    <title>Display a map</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.45.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.45.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+    </head>
+    <body>
+        <h1>Hello from EJS! please open the console to see the two geoJson objects, otherwise they're down below.</h1>
+        <p id="here"></p>
+        <p id="here2"></p>
+
+        <p>copy one of the objects, then visit <a href="http://geojson.io/#map=2/20.0/0.0">this site</a> and paste it</p>
+        <script>
+            var single = <%- JSON.stringify(single) %>;
+            var polygon = <%- JSON.stringify(polygon) %>;
+            console.log(single);
+            console.log(polygon);
+            document.getElementById("here").innerHTML = JSON.stringify(single);
+            document.getElementById("here2").innerHTML = JSON.stringify(polygon);
+        </script>
+    </body>
+</html>
